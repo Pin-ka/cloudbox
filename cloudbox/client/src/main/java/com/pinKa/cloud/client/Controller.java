@@ -22,6 +22,8 @@ public class Controller implements Initializable {
     @FXML
     ListView<String> filesList;
 
+    @FXML
+    TextField clientFileName;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -51,6 +53,19 @@ public class Controller implements Initializable {
         if (tfFileName.getLength() > 0) {
             Network.sendMsg(new FileRequest(tfFileName.getText()));
             tfFileName.clear();
+        }
+    }
+
+    public void pressOnPullBtn(ActionEvent actionEvent) {
+        try {
+            if (Files.exists(Paths.get("client_storage/" + clientFileName.getText()))) {
+                FileMessage fm = new FileMessage(Paths.get("client_storage/" + clientFileName.getText()));
+                Network.sendMsg(fm);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            clientFileName.clear();
         }
     }
 

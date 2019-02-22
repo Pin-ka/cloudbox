@@ -12,6 +12,10 @@
         <Button onAction="#pressOnDownloadBtn" text="Скачать" />
     </HBox>
     <ListView fx:id="filesList" VBox.vgrow="ALWAYS" />
+    <HBox>
+        <TextField fx:id="clientFileName" focusTraversable="false" promptText="Укажите имя файла, который хотите отправить"  HBox.hgrow="ALWAYS" />
+        <Button onAction="#pressOnPullBtn" text="Отправить" />
+    </HBox>
 </VBox>
 
 

@@ -3,6 +3,7 @@ package com.pinKa.cloud.client;
 import com.pinKa.cloud.common.AbstractMessage;
 import com.pinKa.cloud.common.FileMessage;
 import com.pinKa.cloud.common.FileRequest;
+import com.pinKa.cloud.common.ReportMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -25,9 +27,13 @@ public class Controller implements Initializable {
     @FXML
     TextField clientFileName;
 
+    @FXML
+    ListView<String> networkFilesList;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Network.start();
+        refreshServerFilesList();
         Thread t = new Thread(() -> {
             try {
                 while (true) {
@@ -36,6 +42,11 @@ public class Controller implements Initializable {
                         FileMessage fm = (FileMessage) am;
                         Files.write(Paths.get("client_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
                         refreshLocalFilesList();
+                    }
+                    if (am instanceof ReportMessage){
+                        ArrayList<String> serverFilesList=new ArrayList<>();
+                        serverFilesList.addAll(((ReportMessage) am).getServerFilesList());
+                        networkFilesList.getItems().addAll(serverFilesList);
                     }
                 }
             } catch (ClassNotFoundException | IOException e) {
@@ -87,5 +98,10 @@ public class Controller implements Initializable {
                 }
             });
         }
+    }
+
+    public void refreshServerFilesList(){
+        FileRequest getReport=new FileRequest("getReport");
+        Network.sendMsg(getReport);
     }
 }

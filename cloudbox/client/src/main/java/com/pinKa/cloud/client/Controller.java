@@ -33,7 +33,8 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Network.start();
-        refreshServerFilesList();
+        FileRequest getReport=new FileRequest("getReport");
+        Network.sendMsg(getReport);;
         Thread t = new Thread(() -> {
             try {
                 while (true) {
@@ -44,9 +45,7 @@ public class Controller implements Initializable {
                         refreshLocalFilesList();
                     }
                     if (am instanceof ReportMessage){
-                        ArrayList<String> serverFilesList=new ArrayList<>();
-                        serverFilesList.addAll(((ReportMessage) am).getServerFilesList());
-                        networkFilesList.getItems().addAll(serverFilesList);
+                        refreshServerFilesList((ReportMessage)am);
                     }
                 }
             } catch (ClassNotFoundException | IOException e) {
@@ -100,8 +99,15 @@ public class Controller implements Initializable {
         }
     }
 
-    public void refreshServerFilesList(){
-        FileRequest getReport=new FileRequest("getReport");
-        Network.sendMsg(getReport);
+    public void refreshServerFilesList(ReportMessage am){
+        if (Platform.isFxApplicationThread()) {
+            networkFilesList.getItems().clear();
+            networkFilesList.getItems().addAll(am.getServerFilesList());
+        } else {
+            Platform.runLater(() -> {
+                networkFilesList.getItems().clear();
+                networkFilesList.getItems().addAll(am.getServerFilesList());
+            });
+        }
     }
 }

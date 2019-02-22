@@ -6,17 +6,21 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Label?>
 <VBox fx:id="rootNode" alignment="center" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: linear-gradient(#fff 0%, #eee 10%, #ddd 90%, #bbb 100%);" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.pinKa.cloud.client.Controller">
-    <HBox>
-        <TextField fx:id="tfFileName" focusTraversable="false" promptText="Укажите имя файла на сервере, который хотите скачать"  HBox.hgrow="ALWAYS" />
-        <Button onAction="#pressOnDownloadBtn" text="Скачать" />
-    </HBox>
+    <Label text="Локальное хранилище:" VBox.vgrow="ALWAYS"/>
     <ListView fx:id="filesList" VBox.vgrow="ALWAYS" />
     <HBox>
         <TextField fx:id="clientFileName" focusTraversable="false" promptText="Укажите имя файла, который хотите отправить"  HBox.hgrow="ALWAYS" />
         <Button onAction="#pressOnPullBtn" text="Отправить" />
     </HBox>
+
+    <Label text="Сетевое хранилище:" VBox.vgrow="ALWAYS"/>
     <ListView fx:id="networkFilesList" VBox.vgrow="ALWAYS" />
+    <HBox>
+        <TextField fx:id="tfFileName" focusTraversable="false" promptText="Укажите имя файла на сервере, который хотите скачать"  HBox.hgrow="ALWAYS" />
+        <Button onAction="#pressOnDownloadBtn" text="Скачать" />
+    </HBox>
 </VBox>
 
 

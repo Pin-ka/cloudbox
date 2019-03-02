@@ -8,8 +8,13 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -18,14 +23,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-    @FXML
-    TextField tfFileName;
-
-    @FXML
-    ListView<String> filesList;
-
-    @FXML
-    TextField clientFileName;
 
     @FXML
     ListView<String> networkFilesList;
@@ -42,7 +39,6 @@ public class Controller implements Initializable {
                     if (am instanceof FileMessage) {
                         FileMessage fm = (FileMessage) am;
                         Files.write(Paths.get("client_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
-                        refreshLocalFilesList();
                     }
                     if (am instanceof ReportMessage){
                         refreshServerFilesList((ReportMessage)am);
@@ -56,7 +52,6 @@ public class Controller implements Initializable {
         });
         t.setDaemon(true);
         t.start();
-        refreshLocalFilesList();
 
         ContextMenu contextMenu=new ContextMenu();
         MenuItem selectDownload=new MenuItem("Скачать");
@@ -77,51 +72,36 @@ public class Controller implements Initializable {
         networkFilesList.setContextMenu(contextMenu);
     }
 
-    public void pressOnDownloadBtn(ActionEvent actionEvent) {
-        if (tfFileName.getLength() > 0) {
-            Network.sendMsg(new Command(tfFileName.getText()));
-            tfFileName.clear();
-        }
+    public void pressOnDownloadBtn (ActionEvent actionEvent) {
+        Network.sendMsg(new Command(networkFilesList.getSelectionModel().getSelectedItem()));
     }
 
-    public void pressOnPullBtn(ActionEvent actionEvent) {
+    public void pressOnPullBtn(ActionEvent actionEvent)  {
+        Parent root = null;
         try {
-            if (Files.exists(Paths.get("client_storage/" + clientFileName.getText()))) {
-                FileMessage fm = new FileMessage(Paths.get("client_storage/" + clientFileName.getText()));
-                Network.sendMsg(fm);
-            }
+            root = FXMLLoader.load(getClass().getResource("/selectFile.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Локальное хранилище");
+            stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            clientFileName.clear();
         }
+//        try {
+//            if (Files.exists(Paths.get("client_storage/" + clientFileName.getText()))) {
+//                FileMessage fm = new FileMessage(Paths.get("client_storage/" + clientFileName.getText()));
+//                Network.sendMsg(fm);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            clientFileName.clear();
+//        }
     }
 
     public void pressOnDeleteBtn(ActionEvent actionEvent){
-        if (clientFileName.getLength() > 0) {
-            Network.sendMsg(new Command("delete/"+clientFileName.getText()));
-            clientFileName.clear();
-        }
-    }
-
-    public void refreshLocalFilesList() {
-        if (Platform.isFxApplicationThread()) {
-            try {
-                filesList.getItems().clear();
-                Files.list(Paths.get("client_storage")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Platform.runLater(() -> {
-                try {
-                    filesList.getItems().clear();
-                    Files.list(Paths.get("client_storage")).map(p -> p.getFileName().toString()).forEach(o -> filesList.getItems().add(o));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
+        Network.sendMsg(new Command("delete/"+networkFilesList.getSelectionModel().getSelectedItem()));
     }
 
     public void refreshServerFilesList(ReportMessage am){

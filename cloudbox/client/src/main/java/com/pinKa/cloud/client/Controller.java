@@ -31,7 +31,7 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         Network.start();
         Command getReport=new Command("getReport");
-        Network.sendMsg(getReport);;
+        Network.sendMsg(getReport);
         Thread t = new Thread(() -> {
             try {
                 while (true) {
@@ -88,16 +88,6 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        try {
-//            if (Files.exists(Paths.get("client_storage/" + clientFileName.getText()))) {
-//                FileMessage fm = new FileMessage(Paths.get("client_storage/" + clientFileName.getText()));
-//                Network.sendMsg(fm);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            clientFileName.clear();
-//        }
     }
 
     public void pressOnDeleteBtn(ActionEvent actionEvent){

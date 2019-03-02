@@ -26,25 +26,35 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                 if (Files.exists(Paths.get("server_storage/" + fr.getCommand()))) {
                     FileMessage fm = new FileMessage(Paths.get("server_storage/" + fr.getCommand()));
                     ctx.writeAndFlush(fm);
-                }else if (fr.getCommand().equals("getReport")){
+                } else if (fr.getCommand().equals("getReport")) {
                     Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
-                    ReportMessage rm=new ReportMessage(serverFilesList);
+                    ReportMessage rm = new ReportMessage(serverFilesList);
                     ctx.writeAndFlush(rm);
                     serverFilesList.clear();
-                }else if (fr.getCommand().startsWith("delete/")){
+                } else if (fr.getCommand().startsWith("delete/")) {
                     String[] deleteName = fr.getCommand().split("/");
-                    Files.deleteIfExists(Paths.get("server_storage/"+deleteName[1]));
+                    Files.deleteIfExists(Paths.get("server_storage/" + deleteName[1]));
                     Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
-                    ReportMessage rm=new ReportMessage(serverFilesList);
+                    ReportMessage rm = new ReportMessage(serverFilesList);
                     ctx.writeAndFlush(rm);
                     serverFilesList.clear();
+                } else if (fr.getCommand().startsWith("auth/")) {
+                    String[] tokens = fr.getCommand().split("/");
+                    String newNick = AuthService.getNickByLoginAndPass(tokens[1], tokens[2]);
+                    if (newNick != null) {
+                        Command auth = new Command("authOk/" + newNick);
+                        ctx.writeAndFlush(auth);
+                    } else {
+                        Command notFound = new Command("notFound");
+                        ctx.writeAndFlush(notFound);
+                    }
                 }
             }
-            if (msg instanceof FileMessage){
-                FileMessage fm=(FileMessage)msg;
+            if (msg instanceof FileMessage) {
+                FileMessage fm = (FileMessage) msg;
                 Files.write(Paths.get("server_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
                 Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
-                ReportMessage rm=new ReportMessage(serverFilesList);
+                ReportMessage rm = new ReportMessage(serverFilesList);
                 ctx.writeAndFlush(rm);
                 serverFilesList.clear();
             }

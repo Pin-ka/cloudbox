@@ -22,6 +22,7 @@ public class Server {
 
         try {
             ServerBootstrap b = new ServerBootstrap();
+            AuthService.connect();
             b.group(mainGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -41,6 +42,7 @@ public class Server {
         } finally {
             mainGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            AuthService.disconnect();
         }
     }
 

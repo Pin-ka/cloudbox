@@ -51,8 +51,6 @@ public class ControllerAutorisation implements Initializable {
                         }else if (command.getCommand().startsWith("notFound")){
                             messageError.setText("Сочетание логин + пароль НЕ НАЙДЕНО");
                         }
-
-
                     }
                 }
             } catch (ClassNotFoundException | IOException e) {

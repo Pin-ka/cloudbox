@@ -6,6 +6,7 @@ import com.pinKa.cloud.common.Command;
 import com.pinKa.cloud.common.ReportMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -56,6 +57,24 @@ public class Controller implements Initializable {
         t.setDaemon(true);
         t.start();
         refreshLocalFilesList();
+
+        ContextMenu contextMenu=new ContextMenu();
+        MenuItem selectDownload=new MenuItem("Скачать");
+        MenuItem selectDelete=new MenuItem("Удалить");
+        selectDownload.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Network.sendMsg(new Command(networkFilesList.getSelectionModel().getSelectedItem()));
+            }
+        });
+        selectDelete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Network.sendMsg(new Command("delete/"+networkFilesList.getSelectionModel().getSelectedItem()));
+            }
+        });
+        contextMenu.getItems().addAll(selectDownload,selectDelete);
+        networkFilesList.setContextMenu(contextMenu);
     }
 
     public void pressOnDownloadBtn(ActionEvent actionEvent) {
@@ -116,6 +135,5 @@ public class Controller implements Initializable {
             });
         }
     }
-
 
 }

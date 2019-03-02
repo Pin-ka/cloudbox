@@ -33,7 +33,6 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                     serverFilesList.clear();
                 }else if (fr.getCommand().startsWith("delete/")){
                     String[] deleteName = fr.getCommand().split("/");
-                    System.out.println("Получена комманда на удаление файла "+deleteName[1]);
                     Files.deleteIfExists(Paths.get("server_storage/"+deleteName[1]));
                     Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
                     ReportMessage rm=new ReportMessage(serverFilesList);

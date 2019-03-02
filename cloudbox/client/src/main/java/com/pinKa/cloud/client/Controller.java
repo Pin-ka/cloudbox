@@ -2,7 +2,7 @@ package com.pinKa.cloud.client;
 
 import com.pinKa.cloud.common.AbstractMessage;
 import com.pinKa.cloud.common.FileMessage;
-import com.pinKa.cloud.common.FileRequest;
+import com.pinKa.cloud.common.Command;
 import com.pinKa.cloud.common.ReportMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -14,7 +14,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -33,7 +32,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Network.start();
-        FileRequest getReport=new FileRequest("getReport");
+        Command getReport=new Command("getReport");
         Network.sendMsg(getReport);;
         Thread t = new Thread(() -> {
             try {
@@ -61,7 +60,7 @@ public class Controller implements Initializable {
 
     public void pressOnDownloadBtn(ActionEvent actionEvent) {
         if (tfFileName.getLength() > 0) {
-            Network.sendMsg(new FileRequest(tfFileName.getText()));
+            Network.sendMsg(new Command(tfFileName.getText()));
             tfFileName.clear();
         }
     }
@@ -75,6 +74,13 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            clientFileName.clear();
+        }
+    }
+
+    public void pressOnDeleteBtn(ActionEvent actionEvent){
+        if (clientFileName.getLength() > 0) {
+            Network.sendMsg(new Command("delete/"+clientFileName.getText()));
             clientFileName.clear();
         }
     }
@@ -110,4 +116,6 @@ public class Controller implements Initializable {
             });
         }
     }
+
+
 }

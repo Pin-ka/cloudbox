@@ -1,7 +1,7 @@
 package com.pinKa.cloud.server;
 
 import com.pinKa.cloud.common.FileMessage;
-import com.pinKa.cloud.common.FileRequest;
+import com.pinKa.cloud.common.Command;
 import com.pinKa.cloud.common.ReportMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -21,12 +21,20 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
             if (msg == null) {
                 return;
             }
-            if (msg instanceof FileRequest) {
-                FileRequest fr = (FileRequest) msg;
-                if (Files.exists(Paths.get("server_storage/" + fr.getFilename()))) {
-                    FileMessage fm = new FileMessage(Paths.get("server_storage/" + fr.getFilename()));
+            if (msg instanceof Command) {
+                Command fr = (Command) msg;
+                if (Files.exists(Paths.get("server_storage/" + fr.getCommand()))) {
+                    FileMessage fm = new FileMessage(Paths.get("server_storage/" + fr.getCommand()));
                     ctx.writeAndFlush(fm);
-                }else if (fr.getFilename().equals("getReport")){
+                }else if (fr.getCommand().equals("getReport")){
+                    Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
+                    ReportMessage rm=new ReportMessage(serverFilesList);
+                    ctx.writeAndFlush(rm);
+                    serverFilesList.clear();
+                }else if (fr.getCommand().startsWith("delete/")){
+                    String[] deleteName = fr.getCommand().split("/");
+                    System.out.println("Получена комманда на удаление файла "+deleteName[1]);
+                    Files.deleteIfExists(Paths.get("server_storage/"+deleteName[1]));
                     Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
                     ReportMessage rm=new ReportMessage(serverFilesList);
                     ctx.writeAndFlush(rm);

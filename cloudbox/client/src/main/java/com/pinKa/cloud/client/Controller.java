@@ -37,6 +37,22 @@ public class Controller implements Initializable {
                     if (am instanceof FileMessage) {
                         FileMessage fm = (FileMessage) am;
                         Files.write(Paths.get("client_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
+                        if (Platform.isFxApplicationThread()) {
+                            Alert info=new Alert(Alert.AlertType.INFORMATION);
+                            info.setTitle("Отчет о загрузке");
+                            info.setHeaderText(null);
+                            info.setContentText("Файл успешно загружен");
+                            info.showAndWait();
+                            networkFilesList.requestFocus();
+                        } else {
+                            Platform.runLater(() -> {
+                                Alert info=new Alert(Alert.AlertType.INFORMATION);
+                                info.setTitle("Отчет о загрузке");
+                                info.setHeaderText(null);
+                                info.setContentText("Файл успешно загружен");
+                                info.showAndWait();
+                            });
+                        }
                     }
                     if (am instanceof ReportMessage){
                         serverFilesList.clear();

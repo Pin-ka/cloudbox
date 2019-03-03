@@ -32,6 +32,26 @@ public class AuthService {
         return null;
     }
 
+    public  static boolean addUser(String login,String pass,String nick){
+        String verify=String.format("SELECT login FROM logins\n"+
+                "WHERE nick='%s'",nick);
+        ResultSet rs=null;
+        try {
+            rs=stmt.executeQuery(verify);
+            if (!rs.next()) {
+                String sql=String.format("INSERT INTO logins(login,password,nick)"+
+                        "VALUES ('%s','%s','%s')",login,pass,nick);
+                stmt.execute(sql);
+                return true;
+            }else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void disconnect() {
         try {
             connection.close();

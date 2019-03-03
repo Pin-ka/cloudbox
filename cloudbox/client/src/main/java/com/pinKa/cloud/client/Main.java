@@ -11,7 +11,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/autorisation.fxml"));
-        primaryStage.setTitle("cloud-box client");
+        primaryStage.setTitle("Запрос авторизации");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

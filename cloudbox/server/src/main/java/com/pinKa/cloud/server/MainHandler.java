@@ -48,6 +48,15 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                         Command notFound = new Command("notFound");
                         ctx.writeAndFlush(notFound);
                     }
+                }else if (fr.getCommand().startsWith("reg/")){
+                    String[] tokens = fr.getCommand().split("/");
+                    boolean isRegOk=AuthService.addUser(tokens[1], tokens[2],tokens[3]);
+                    if (isRegOk){
+                        ctx.writeAndFlush(new Command("RegOk/"+tokens[3]));
+                    }else {
+                        Command regFail = new Command("RegFail");
+                        ctx.writeAndFlush(regFail);
+                    }
                 }
             }
             if (msg instanceof FileMessage) {

@@ -14,6 +14,7 @@
         <Button onAction="#pressOnDownloadBtn" text="Скачать" />
         <Button  onAction="#pressOnDeleteBtn" text="Удалить" />
         <Button onAction="#pressOnPullBtn" text="Отправить на сервер"/>
+        <Button onAction="#exit" text="Выйти"/>
     </HBox>
 </VBox>
 

@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -24,6 +25,9 @@ public class Controller implements Initializable {
 
     @FXML
     ListView<String> networkFilesList;
+
+    @FXML
+    VBox rootNode;
 
     public static String name;
 
@@ -103,5 +107,10 @@ public class Controller implements Initializable {
         if(networkFilesList.getSelectionModel().getSelectedItem()!=null) {
             Network.sendMsg(new Command("delete/" + networkFilesList.getSelectionModel().getSelectedItem(),name));
         }
+    }
+
+    public void exit(ActionEvent actionEvent) {
+        ((Stage)rootNode.getScene().getWindow()).close();
+        Network.stop();
     }
 }

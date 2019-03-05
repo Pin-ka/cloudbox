@@ -78,4 +78,8 @@ public class ControllerRegistration implements Initializable {
         }
     }
 
+    public void exit(ActionEvent actionEvent) {
+        ((Stage)regBox.getScene().getWindow()).close();
+        Network.stop();
+}
 }

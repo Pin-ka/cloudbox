@@ -3,9 +3,10 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="regBox" alignment="center" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: linear-gradient(#fff 0%, #eee 10%, #ddd 90%, #bbb 100%);" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.pinKa.cloud.client.ControllerRegistration">
-    <TextField fx:id="login" text="Введите логин" VBox.vgrow="ALWAYS"/>
-    <TextField fx:id="password" text="Введите пароль" VBox.vgrow="ALWAYS"/>
-    <TextField fx:id="nick" text="Введите ник" VBox.vgrow="ALWAYS"/>
+    <TextField fx:id="login" promptText="Введите логин" VBox.vgrow="ALWAYS"/>
+    <TextField fx:id="password" promptText="Введите пароль" VBox.vgrow="ALWAYS"/>
+    <TextField fx:id="nick" promptText="Введите ник" VBox.vgrow="ALWAYS"/>
         <Button onAction="#setDataOnServer" text="Регистрация нового юзера" />
+        <Button onAction="#exit" text="Выход" />
     <Label fx:id="messageError" VBox.vgrow="ALWAYS"/>
 </VBox>

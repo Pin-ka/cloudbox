@@ -12,11 +12,12 @@
     <ImageView>
         <Image url="mult.png"/>
     </ImageView>
-    <TextField fx:id="login" text="Введите логин" VBox.vgrow="ALWAYS"/>
-    <TextField fx:id="password" text="Введите пароль" VBox.vgrow="ALWAYS"/>
-    <HBox VBox.vgrow="ALWAYS" >
+    <TextField fx:id="login" promptText="Введите логин" VBox.vgrow="ALWAYS"/>
+    <PasswordField fx:id="password" text="Введите пароль" VBox.vgrow="ALWAYS"/>
+    <HBox HBox.hgrow="ALWAYS" >
         <Button onAction="#getQuestion" text="Вход" />
         <Button  onAction="#getUserData" text="Регистрация" />
+        <Button  onAction="#exit" text="Выход" />
     </HBox>
     <Label fx:id="messageError" VBox.vgrow="ALWAYS"/>
 </VBox>

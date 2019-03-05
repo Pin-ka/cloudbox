@@ -61,7 +61,7 @@ public class ControllerAutorisation implements Initializable {
                                 }
                             }else if (command.getCommand().equals("notFound")){
                                     Platform.runLater(() -> {
-                                        messageError.setText("Сочетание логин + пароль НЕ НАЙДЕНО");
+                                        messageError.setText("Неверный логин/пароль");
                                     });
                             }
                         }
@@ -84,5 +84,10 @@ public class ControllerAutorisation implements Initializable {
             Scene scene = new Scene(root);
             ((Stage)identBox.getScene().getWindow()).setTitle("Регистрация");
             ((Stage)identBox.getScene().getWindow()).setScene(scene);
+    }
+
+    public void exit(ActionEvent actionEvent) {
+        ((Stage)identBox.getScene().getWindow()).close();
+        Network.stop();
     }
 }

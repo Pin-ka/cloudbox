@@ -7,6 +7,7 @@ import java.nio.file.Path;
 public class FileMessage extends AbstractMessage {
     private String filename;
     private byte[] data;
+    private String userName;
 
     public String getFilename() {
         return filename;
@@ -14,6 +15,14 @@ public class FileMessage extends AbstractMessage {
 
     public byte[] getData() {
         return data;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public FileMessage(Path path) throws IOException {

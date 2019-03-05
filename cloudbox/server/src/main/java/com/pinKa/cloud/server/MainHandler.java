@@ -23,18 +23,18 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
             }
             if (msg instanceof Command) {
                 Command fr = (Command) msg;
-                if (Files.exists(Paths.get("server_storage/" + fr.getCommand()))) {
-                    FileMessage fm = new FileMessage(Paths.get("server_storage/" + fr.getCommand()));
+                if (Files.exists(Paths.get("server_storage/"+fr.getName()+"/"+ fr.getCommand()))) {
+                    FileMessage fm = new FileMessage(Paths.get("server_storage/" +fr.getName()+"/"+ fr.getCommand()));
                     ctx.writeAndFlush(fm);
                 } else if (fr.getCommand().equals("getReport")) {
-                    Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
+                    Files.list(Paths.get("server_storage/"+fr.getName())).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
                     ReportMessage rm = new ReportMessage(serverFilesList);
                     ctx.writeAndFlush(rm);
                     serverFilesList.clear();
                 } else if (fr.getCommand().startsWith("delete/")) {
                     String[] deleteName = fr.getCommand().split("/");
-                    Files.deleteIfExists(Paths.get("server_storage/" + deleteName[1]));
-                    Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
+                    Files.deleteIfExists(Paths.get("server_storage/"+fr.getName()+"/"+ deleteName[1]));
+                    Files.list(Paths.get("server_storage/"+fr.getName())).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
                     ReportMessage rm = new ReportMessage(serverFilesList);
                     ctx.writeAndFlush(rm);
                     serverFilesList.clear();
@@ -42,28 +42,28 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                     String[] tokens = fr.getCommand().split("/");
                     String newNick = AuthService.getNickByLoginAndPass(tokens[1], tokens[2]);
                     if (newNick != null) {
-                        Command auth = new Command("authOk/" + newNick);
+                        Command auth = new Command("authOk",newNick);
                         ctx.writeAndFlush(auth);
                     } else {
-                        Command notFound = new Command("notFound");
+                        Command notFound = new Command("notFound",null);
                         ctx.writeAndFlush(notFound);
                     }
                 }else if (fr.getCommand().startsWith("reg/")){
                     String[] tokens = fr.getCommand().split("/");
                     boolean isRegOk=AuthService.addUser(tokens[1], tokens[2],tokens[3]);
                     if (isRegOk){
-                        ctx.writeAndFlush(new Command("RegOk"));
-                        ctx.writeAndFlush(new Command("authOk/" + tokens[3]));
+                        Files.createDirectory(Paths.get("server_storage/" + tokens[3]));
+                        ctx.writeAndFlush(new Command("regOk",tokens[3]));
                     }else {
-                        Command regFail = new Command("RegFail");
+                        Command regFail = new Command("regFail",null);
                         ctx.writeAndFlush(regFail);
                     }
                 }
             }
             if (msg instanceof FileMessage) {
                 FileMessage fm = (FileMessage) msg;
-                Files.write(Paths.get("server_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
-                Files.list(Paths.get("server_storage")).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
+                Files.write(Paths.get("server_storage/" +fm.getUserName()+"/"+ fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
+                Files.list(Paths.get("server_storage/"+fm.getUserName())).map(p -> p.getFileName().toString()).forEach(o -> serverFilesList.add(o));
                 ReportMessage rm = new ReportMessage(serverFilesList);
                 ctx.writeAndFlush(rm);
                 serverFilesList.clear();

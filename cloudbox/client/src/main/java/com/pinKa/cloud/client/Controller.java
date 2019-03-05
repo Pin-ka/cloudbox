@@ -25,9 +25,11 @@ public class Controller implements Initializable {
     @FXML
     ListView<String> networkFilesList;
 
+    public static String name;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Command getReport=new Command("getReport");
+        Command getReport=new Command("getReport",name);
         Network.sendMsg(getReport);
         ArrayList<String> serverFilesList=new ArrayList<>();
         Thread t = new Thread(() -> {
@@ -37,14 +39,6 @@ public class Controller implements Initializable {
                     if (am instanceof FileMessage) {
                         FileMessage fm = (FileMessage) am;
                         Files.write(Paths.get("client_storage/" + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
-                        if (Platform.isFxApplicationThread()) {
-                            Alert info=new Alert(Alert.AlertType.INFORMATION);
-                            info.setTitle("Отчет о загрузке");
-                            info.setHeaderText(null);
-                            info.setContentText("Файл успешно загружен");
-                            info.showAndWait();
-                            networkFilesList.requestFocus();
-                        } else {
                             Platform.runLater(() -> {
                                 Alert info=new Alert(Alert.AlertType.INFORMATION);
                                 info.setTitle("Отчет о загрузке");
@@ -52,20 +46,14 @@ public class Controller implements Initializable {
                                 info.setContentText("Файл успешно загружен");
                                 info.showAndWait();
                             });
-                        }
                     }
                     if (am instanceof ReportMessage){
                         serverFilesList.clear();
                         serverFilesList.addAll(((ReportMessage) am).getServerFilesList());
-                        if (Platform.isFxApplicationThread()) {
-                            networkFilesList.getItems().clear();
-                            networkFilesList.getItems().addAll(serverFilesList);
-                        } else {
                             Platform.runLater(() -> {
                                 networkFilesList.getItems().clear();
                                 networkFilesList.getItems().addAll(serverFilesList);
                             });
-                        }
                     }
                 }
             } catch (ClassNotFoundException | IOException e) {
@@ -82,13 +70,13 @@ public class Controller implements Initializable {
         selectDownload.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Network.sendMsg(new Command(networkFilesList.getSelectionModel().getSelectedItem()));
+                Network.sendMsg(new Command(networkFilesList.getSelectionModel().getSelectedItem(),name));
             }
         });
         selectDelete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Network.sendMsg(new Command("delete/"+networkFilesList.getSelectionModel().getSelectedItem()));
+                Network.sendMsg(new Command("delete/"+networkFilesList.getSelectionModel().getSelectedItem(),name));
             }
         });
         contextMenu.getItems().addAll(selectDownload,selectDelete);
@@ -97,7 +85,7 @@ public class Controller implements Initializable {
 
     public void pressOnDownloadBtn(ActionEvent actionEvent) {
         if(networkFilesList.getSelectionModel().getSelectedItem()!=null) {
-            Network.sendMsg(new Command(networkFilesList.getSelectionModel().getSelectedItem()));
+            Network.sendMsg(new Command(networkFilesList.getSelectionModel().getSelectedItem(),name));
         }
 
     }
@@ -113,7 +101,7 @@ public class Controller implements Initializable {
 
     public void pressOnDeleteBtn(ActionEvent actionEvent) {
         if(networkFilesList.getSelectionModel().getSelectedItem()!=null) {
-            Network.sendMsg(new Command("delete/" + networkFilesList.getSelectionModel().getSelectedItem()));
+            Network.sendMsg(new Command("delete/" + networkFilesList.getSelectionModel().getSelectedItem(),name));
         }
     }
 }

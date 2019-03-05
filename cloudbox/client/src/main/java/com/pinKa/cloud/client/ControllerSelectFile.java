@@ -29,14 +29,6 @@ public class ControllerSelectFile implements Initializable {
     }
 
     public void refreshLocalFilesList() {
-        if (Platform.isFxApplicationThread()) {
-            try {
-                clientFilesList.getItems().clear();
-                Files.list(Paths.get("client_storage")).map(p -> p.getFileName().toString()).forEach(o -> clientFilesList.getItems().add(o));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
             Platform.runLater(() -> {
                 try {
                     clientFilesList.getItems().clear();
@@ -45,13 +37,13 @@ public class ControllerSelectFile implements Initializable {
                     e.printStackTrace();
                 }
             });
-        }
     }
 
     public void pull(ActionEvent actionEvent) {
         try {
             if (Files.exists(Paths.get("client_storage/" + clientFilesList.getSelectionModel().getSelectedItem()))) {
                 FileMessage fm = new FileMessage(Paths.get("client_storage/" + clientFilesList.getSelectionModel().getSelectedItem()));
+                fm.setUserName(Controller.name);
                 Network.sendMsg(fm);
                 ((Stage)selectBox.getScene().getWindow()).close();
             }

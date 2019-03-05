@@ -44,39 +44,25 @@ public class ControllerAutorisation implements Initializable {
                         AbstractMessage am = Network.readObject();
                         if (am instanceof Command) {
                             Command command = (Command) am;
-                            if (command.getCommand().startsWith("authOk/")) {
+                            if (command.getCommand().equals("authOk")) {
                                 isAuto = true;
                                 Parent root = null;
                                 try {
-                                    root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-                                    if (Platform.isFxApplicationThread()) {
-                                        Scene scene = new Scene(root);
-                                        ((Stage)identBox.getScene().getWindow()).setTitle("Облако пользователя");
-                                        ((Stage)identBox.getScene().getWindow()).setScene(scene);
-
-                                    } else {
-                                        Parent fRoot = root;
+                                    Controller.name=command.getName();
+                                    Parent rootMain = FXMLLoader.load(getClass().getResource("/main.fxml"));
                                         Platform.runLater(() -> {
-                                            Scene scene = new Scene(fRoot);
+                                            Scene scene = new Scene(rootMain);
+                                            ((Stage)identBox.getScene().getWindow()).setTitle("Облако пользователя "+command.getName());
                                             ((Stage)identBox.getScene().getWindow()).setScene(scene);
                                         });
-                                    }
 
                                 } catch (IOException e) {
                                     e.printStackTrace();
-                                }finally {
-                                    System.out.println("try кончился");
-
-                                    //Вот здесь сокет отваливается!!!!!!!!!!
                                 }
                             }else if (command.getCommand().equals("notFound")){
-                                if (Platform.isFxApplicationThread()) {
-                                    messageError.setText("Сочетание логин + пароль   НЕ НАЙДЕНО");
-                                } else {
                                     Platform.runLater(() -> {
                                         messageError.setText("Сочетание логин + пароль НЕ НАЙДЕНО");
                                     });
-                                }
                             }
                         }
                     }
@@ -89,14 +75,14 @@ public class ControllerAutorisation implements Initializable {
     }
 
     public void getQuestion(ActionEvent actionEvent) {
-        Network.sendMsg(new Command("auth/"+login.getText()+"/"+password.getText()));
+        Network.sendMsg(new Command("auth/"+login.getText()+"/"+password.getText(),null));
     }
 
     public void getUserData(ActionEvent actionEvent) throws IOException {
             Parent root = null;
             root = FXMLLoader.load(getClass().getResource("/registration.fxml"));
             Scene scene = new Scene(root);
-        ((Stage)identBox.getScene().getWindow()).setTitle("Регистрация");
-        ((Stage)identBox.getScene().getWindow()).setScene(scene);
+            ((Stage)identBox.getScene().getWindow()).setTitle("Регистрация");
+            ((Stage)identBox.getScene().getWindow()).setScene(scene);
     }
 }

@@ -40,17 +40,13 @@ public class ControllerRegistration implements Initializable {
                     AbstractMessage am = Network.readObject();
                     if (am instanceof Command) {
                         Command command = (Command) am;
-                        if (command.getCommand().startsWith("RegOk")) {
+                        if (command.getCommand().equals("regOk")) {
                             isregOk = true;
-                            getOutInMain();
-                        }else if (command.getCommand().equals("RegFail")){
-                            if (Platform.isFxApplicationThread()) {
-                                messageError.setText("Данный ник уже используется");
-                            } else {
+                            getOutInMain(command.getName());
+                        }else if (command.getCommand().equals("regFail")){
                                 Platform.runLater(() -> {
                                     messageError.setText("Данный ник уже используется");
                                 });
-                            }
                         }
                     }
                 }
@@ -63,26 +59,20 @@ public class ControllerRegistration implements Initializable {
     }
 
     public void setDataOnServer(ActionEvent actionEvent) {
-        Network.sendMsg(new Command("reg/"+login.getText()+"/"+password.getText()+"/"+nick.getText()));
+        Network.sendMsg(new Command("reg/"+login.getText()+"/"+password.getText()+"/"+nick.getText(),null));
     }
 
-    private void getOutInMain(){
+    private void getOutInMain(String newNick){
         Parent root = null;
         try {
+            Controller.name=newNick;
             root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-            if (Platform.isFxApplicationThread()) {
-                Scene scene = new Scene(root);
-                ((Stage)regBox.getScene().getWindow()).setTitle("Облако пользователя");
-                ((Stage)regBox.getScene().getWindow()).setScene(scene);
-            } else {
                 Parent rootf = root;
                 Platform.runLater(() -> {
                     Scene scene = new Scene(rootf);
-                    ((Stage)regBox.getScene().getWindow()).setTitle("Облако пользователя");
+                    ((Stage)regBox.getScene().getWindow()).setTitle("Облако пользователя "+newNick);
                     ((Stage)regBox.getScene().getWindow()).setScene(scene);
                 });
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

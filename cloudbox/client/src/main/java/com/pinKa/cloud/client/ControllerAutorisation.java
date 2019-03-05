@@ -37,7 +37,7 @@ public class ControllerAutorisation implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Network.start();
-            Thread t1 = new Thread(() -> {
+           Thread t1 = new Thread(() -> {
                 try {
                     boolean isAuto=false;
                     while (!isAuto) {
@@ -50,28 +50,28 @@ public class ControllerAutorisation implements Initializable {
                                 try {
                                     root = FXMLLoader.load(getClass().getResource("/main.fxml"));
                                     if (Platform.isFxApplicationThread()) {
-                                        Stage stageMain = new Stage();
                                         Scene scene = new Scene(root);
-                                        stageMain.setScene(scene);
-                                        ((Stage)identBox.getScene().getWindow()).close();
-                                        stageMain.showAndWait();
+                                        ((Stage)identBox.getScene().getWindow()).setTitle("Облако пользователя");
+                                        ((Stage)identBox.getScene().getWindow()).setScene(scene);
+
                                     } else {
                                         Parent fRoot = root;
                                         Platform.runLater(() -> {
-                                            Stage stageMain = new Stage();
                                             Scene scene = new Scene(fRoot);
-                                            stageMain.setScene(scene);
-                                            ((Stage)identBox.getScene().getWindow()).close();
-                                            stageMain.showAndWait();
+                                            ((Stage)identBox.getScene().getWindow()).setScene(scene);
                                         });
                                     }
 
                                 } catch (IOException e) {
                                     e.printStackTrace();
+                                }finally {
+                                    System.out.println("try кончился");
+
+                                    //Вот здесь сокет отваливается!!!!!!!!!!
                                 }
                             }else if (command.getCommand().equals("notFound")){
                                 if (Platform.isFxApplicationThread()) {
-                                    messageError.setText("Сочетание логин + пароль НЕ НАЙДЕНО");
+                                    messageError.setText("Сочетание логин + пароль   НЕ НАЙДЕНО");
                                 } else {
                                     Platform.runLater(() -> {
                                         messageError.setText("Сочетание логин + пароль НЕ НАЙДЕНО");
@@ -82,10 +82,9 @@ public class ControllerAutorisation implements Initializable {
                     }
                 } catch (ClassNotFoundException | IOException e) {
                     e.printStackTrace();
-                }finally {
-                    Network.stop();
                 }
             });
+            t1.setDaemon(true);
             t1.start();
     }
 
@@ -96,10 +95,8 @@ public class ControllerAutorisation implements Initializable {
     public void getUserData(ActionEvent actionEvent) throws IOException {
             Parent root = null;
             root = FXMLLoader.load(getClass().getResource("/registration.fxml"));
-            Stage stageMain = new Stage();
             Scene scene = new Scene(root);
-            stageMain.setScene(scene);
-            ((Stage)identBox.getScene().getWindow()).close();
-            stageMain.showAndWait();
+        ((Stage)identBox.getScene().getWindow()).setTitle("Регистрация");
+        ((Stage)identBox.getScene().getWindow()).setScene(scene);
     }
 }

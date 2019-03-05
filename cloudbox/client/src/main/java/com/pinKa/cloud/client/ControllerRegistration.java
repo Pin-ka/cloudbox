@@ -14,7 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -41,31 +40,9 @@ public class ControllerRegistration implements Initializable {
                     AbstractMessage am = Network.readObject();
                     if (am instanceof Command) {
                         Command command = (Command) am;
-                        if (command.getCommand().startsWith("RegOk/")) {
+                        if (command.getCommand().startsWith("RegOk")) {
                             isregOk = true;
-                            Parent root = null;
-                            try {
-                                root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-                                if (Platform.isFxApplicationThread()) {
-                                    Stage stageMain = new Stage();
-                                    Scene scene = new Scene(root);
-                                    stageMain.setScene(scene);
-                                    ((Stage)regBox.getScene().getWindow()).close();
-                                    stageMain.showAndWait();
-                                } else {
-                                    Parent fRoot = root;
-                                    Platform.runLater(() -> {
-                                        Stage stageMain = new Stage();
-                                        Scene scene = new Scene(fRoot);
-                                        stageMain.setScene(scene);
-                                        ((Stage)regBox.getScene().getWindow()).close();
-                                        stageMain.showAndWait();
-                                    });
-                                }
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            getOutInMain();
                         }else if (command.getCommand().equals("RegFail")){
                             if (Platform.isFxApplicationThread()) {
                                 messageError.setText("Данный ник уже используется");
@@ -77,6 +54,7 @@ public class ControllerRegistration implements Initializable {
                         }
                     }
                 }
+
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
@@ -86,6 +64,28 @@ public class ControllerRegistration implements Initializable {
 
     public void setDataOnServer(ActionEvent actionEvent) {
         Network.sendMsg(new Command("reg/"+login.getText()+"/"+password.getText()+"/"+nick.getText()));
+    }
+
+    private void getOutInMain(){
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/main.fxml"));
+            if (Platform.isFxApplicationThread()) {
+                Scene scene = new Scene(root);
+                ((Stage)regBox.getScene().getWindow()).setTitle("Облако пользователя");
+                ((Stage)regBox.getScene().getWindow()).setScene(scene);
+            } else {
+                Parent rootf = root;
+                Platform.runLater(() -> {
+                    Scene scene = new Scene(rootf);
+                    ((Stage)regBox.getScene().getWindow()).setTitle("Облако пользователя");
+                    ((Stage)regBox.getScene().getWindow()).setScene(scene);
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

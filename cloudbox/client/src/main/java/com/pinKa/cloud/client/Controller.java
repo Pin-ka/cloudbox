@@ -74,7 +74,6 @@ public class Controller implements Initializable {
                 Network.stop();
             }
         });
-        t.setDaemon(true);
         t.start();
 
         ContextMenu contextMenu=new ContextMenu();

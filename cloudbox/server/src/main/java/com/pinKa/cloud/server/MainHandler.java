@@ -52,7 +52,8 @@ public class MainHandler extends ChannelInboundHandlerAdapter {
                     String[] tokens = fr.getCommand().split("/");
                     boolean isRegOk=AuthService.addUser(tokens[1], tokens[2],tokens[3]);
                     if (isRegOk){
-                        ctx.writeAndFlush(new Command("RegOk/"+tokens[3]));
+                        ctx.writeAndFlush(new Command("RegOk"));
+                        ctx.writeAndFlush(new Command("authOk/" + tokens[3]));
                     }else {
                         Command regFail = new Command("RegFail");
                         ctx.writeAndFlush(regFail);

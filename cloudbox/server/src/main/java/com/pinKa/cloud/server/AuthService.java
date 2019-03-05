@@ -32,6 +32,7 @@ public class AuthService {
         return null;
     }
 
+
     public  static boolean addUser(String login,String pass,String nick){
         String verify=String.format("SELECT login FROM logins\n"+
                 "WHERE nick='%s'",nick);
